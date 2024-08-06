@@ -131,3 +131,12 @@ trusted_clients =
 	::1/128
 	FD00::/8
 
+[update_manager klipper_tmc_autotune]
+type = git_repo
+channel = dev
+path = ~/addon_plugins/klipper_tmc_autotune
+origin = https://github.com/andrewmcgr/klipper_tmc_autotune.git
+managed_services = klipper
+primary_branch = main
+install_script = install.sh
+
