@@ -142,3 +142,16 @@ managed_services = klipper
 primary_branch = main
 install_script = install.sh
 
+[update_manager Fluidd]
+type = web
+repo = Rat-OS/fluidd
+path = ~/fluidd
+channel = stable
+
+[update_manager FluiddTheme]
+type = git_repo
+path = ~/printer_data/config/.fluidd-theme
+primary_branch = main
+origin = https://github.com/Rat-OS/fluidd-theme
+is_system_service = false
+
