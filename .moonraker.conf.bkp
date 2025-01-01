@@ -1,7 +1,7 @@
 [server]
 host = 0.0.0.0
 port = 7125
-max_upload_size = 1024
+max_upload_size = 16384
 klippy_uds_address = ~/printer_data/comms/klippy.sock
 
 [announcements]
@@ -22,36 +22,30 @@ path = ~/printer_data/config/.theme
 origin = https://github.com/Rat-OS/RatOS-theme.git
 is_system_service = False
 primary_branch = v2.1.x
+info_tags = 
+	desc=RatOS Core: Theme
 
 [update_manager ratos-configurator]
 type = git_repo
 path = ~/ratos-configurator
 primary_branch = v2.1.x-deployment
 origin = https://github.com/Rat-OS/RatOS-configurator.git
-install_script = scripts/setup.sh
+install_script = configuration/scripts/ratos-install.sh
 is_system_service = True
 managed_services = 
 	ratos-configurator
-info_tags = 
-	desc=RatOS Configurator repository
-
-[update_manager RatOS]
-type = git_repo
-path = ~/printer_data/config/RatOS/
-primary_branch = v2.1.x
-origin = https://github.com/Rat-OS/RatOS-configuration.git
-install_script = scripts/ratos-install.sh
-managed_services = 
 	moonraker
 	klipper
 info_tags = 
-	desc=RatOS Configuration repository
+	desc=RatOS Core: Configurator & Configuration
 
 [update_manager mainsail]
 type = web
 channel = stable
 repo = mainsail-crew/mainsail
 path = ~/mainsail
+info_tags = 
+	desc=External: Mainsail Web Interface
 
 [update_manager crowsnest]
 type = git_repo
@@ -59,6 +53,8 @@ path = ~/crowsnest
 origin = https://github.com/mainsail-crew/crowsnest.git
 install_script = tools/pkglist.sh
 managed_services = crowsnest
+info_tags = 
+	desc=External: Crowsnest Webcam Manager
 
 [update_manager timelapse]
 type = git_repo
@@ -66,6 +62,8 @@ primary_branch = main
 path = ~/moonraker-timelapse
 origin = https://github.com/mainsail-crew/moonraker-timelapse.git
 managed_services = klipper moonraker
+info_tags = 
+	desc=External: Timelapse Moonraker Plugin
 
 [update_manager LinearMovementAnalysis]
 type = git_repo
@@ -78,6 +76,8 @@ requirements = requirements.txt
 is_system_service = False
 managed_services = 
 	klipper
+info_tags = 
+	desc=External: Linear Movement Analysis
 
 [update_manager KlipperScreen]
 type = git_repo
@@ -88,6 +88,8 @@ requirements = scripts/KlipperScreen-requirements.txt
 system_dependencies = scripts/system-dependencies.json
 managed_services = KlipperScreen
 pinned_commit = 71eef9ee1f23aa4fd6b68169cfe5dd7908e478b2
+info_tags = 
+	desc=External: KlipperScreen Touchscreen Interface
 
 [update_manager beacon]
 type = git_repo
@@ -100,7 +102,7 @@ install_script = install.sh
 is_system_service = False
 managed_services = klipper
 info_tags = 
-	desc=Beacon Surface Scanner
+	desc=External: Beacon Surface Scanner
 
 [history]
 
@@ -108,7 +110,7 @@ info_tags =
 
 [update_manager klipper]
 channel = dev
-pinned_commit = 96cceed23efc7a3759ecfba0a228cdcb4d5244d3
+pinned_commit = b7233d1197d9a2158676ad39d02b80f787054e20
 
 [update_manager moonraker]
 channel = dev
