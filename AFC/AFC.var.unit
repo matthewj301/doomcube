@@ -11,7 +11,7 @@
             "map": "T1",
             "load": true,
             "prep": true,
-            "tool_loaded": true,
+            "tool_loaded": false,
             "loaded_to_hub": true,
             "material": null,
             "spool_id": "",
@@ -19,9 +19,9 @@
             "weight": "",
             "extruder_temp": null,
             "runout_lane": "NONE",
-            "filament_status": "In Tool",
-            "filament_status_led": "#0000ff",
-            "status": "Tooled"
+            "filament_status": "Ready",
+            "filament_status_led": "#00cc00",
+            "status": "Loaded"
         },
         "lane2": {
             "name": "lane2",
@@ -32,19 +32,19 @@
             "buffer_status": "Advancing",
             "lane": 2,
             "map": "T2",
-            "load": false,
-            "prep": false,
+            "load": true,
+            "prep": true,
             "tool_loaded": false,
-            "loaded_to_hub": false,
+            "loaded_to_hub": true,
             "material": null,
             "spool_id": "",
             "color": "",
             "weight": "",
             "extruder_temp": null,
             "runout_lane": "NONE",
-            "filament_status": "Not Ready",
-            "filament_status_led": "#ff0000",
-            "status": null
+            "filament_status": "Ready",
+            "filament_status_led": "#00cc00",
+            "status": "Loaded"
         },
         "lane3": {
             "name": "lane3",
@@ -78,29 +78,29 @@
             "buffer_status": "Advancing",
             "lane": 4,
             "map": "T4",
-            "load": false,
-            "prep": false,
-            "tool_loaded": false,
-            "loaded_to_hub": false,
+            "load": true,
+            "prep": true,
+            "tool_loaded": true,
+            "loaded_to_hub": true,
             "material": "ABS",
             "spool_id": "50",
             "color": "#2D2926",
-            "weight": 250.0,
+            "weight": 171.68316200946504,
             "extruder_temp": 270,
             "runout_lane": "NONE",
-            "filament_status": "Not Ready",
-            "filament_status_led": "#ff0000",
-            "status": null
+            "filament_status": "In Tool",
+            "filament_status_led": "#0000ff",
+            "status": "Tooled"
         }
     },
     "system": {
-        "current_load": "lane1",
+        "current_load": "lane4",
         "num_units": 1,
         "num_lanes": 4,
         "num_extruders": 1,
         "extruders": {
             "extruder": {
-                "lane_loaded": "lane1"
+                "lane_loaded": "lane4"
             }
         }
     }
