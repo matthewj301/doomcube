@@ -51,7 +51,7 @@
             "runout_lane": null,
             "filament_status": "Ready",
             "filament_status_led": "#00cc00",
-            "status": "None",
+            "status": "Loaded",
             "dist_hub": 115.0
         },
         "lane3": {
@@ -116,7 +116,7 @@
         "num_extruders": 1,
         "extruders": {
             "extruder": {
-                "lane_loaded": ""
+                "lane_loaded": null
             }
         },
         "bypass": {
