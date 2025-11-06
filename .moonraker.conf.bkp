@@ -181,3 +181,11 @@ system_dependencies = system-dependencies.json
 primary_branch = main
 managed_services = klipper
 
+[update_manager klipper_auto_speed]
+type = git_repo
+path = ~/addon_plugins/klipper_auto_speed
+origin = https://github.com/anonoei/klipper_auto_speed.git
+primary_branch = main
+install_script = install.sh
+managed_services = klipper
+
