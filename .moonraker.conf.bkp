@@ -1,100 +1,60 @@
 [server]
 host = 0.0.0.0
 port = 7125
-max_upload_size = 16384
-klippy_uds_address = ~/printer_data/comms/klippy.sock
+klippy_uds_address = /home/pi/printer_data/comms/klippy.sock
 
-[announcements]
-subscriptions = 
-	RatOS
-	mainsail
+[authorization]
+trusted_clients = 
+	192.168.0.0/16
+	10.0.0.0/8
+	127.0.0.0/8
+	169.254.0.0/16
+	172.16.0.0/12
+	192.168.0.0/16
+	FC00::/7
+	FE80::/10
+	::1/128
+cors_domains = 
+	*.lan
+	*.local
+	*://localhost
+	*://localhost:*
+	*://my.mainsail.xyz
+	*://app.fluidd.xyz
+
+[octoprint_compat]
+
+[history]
 
 [file_manager]
-enable_object_processing = False
+enable_object_processing = True
+
+[update_manager klipper]
+report_anomalies = False
 
 [update_manager]
+channel = dev
 refresh_interval = 168
-enable_auto_refresh = True
 
-[update_manager RatOSTheme]
+[update_manager Klipper-Adaptive-Meshing-Purging]
 type = git_repo
-path = ~/printer_data/config/.theme
-origin = https://github.com/Rat-OS/RatOS-theme.git
-is_system_service = False
-primary_branch = v2.1.x
-info_tags = 
-	desc=RatOS Core: Theme
-
-[update_manager ratos-configurator]
-type = git_repo
-path = ~/ratos-configurator
-primary_branch = v2.1.x-deployment
-origin = https://github.com/Rat-OS/RatOS-configurator.git
-install_script = configuration/scripts/ratos-install.sh
-is_system_service = True
-managed_services = 
-	ratos-configurator
-	moonraker
-	klipper
-info_tags = 
-	desc=RatOS Core: Configurator & Configuration
-
-[update_manager mainsail]
-type = web
-channel = stable
-repo = mainsail-crew/mainsail
-path = ~/mainsail
-info_tags = 
-	desc=External: Mainsail Web Interface
-
-[update_manager crowsnest]
-type = git_repo
-path = ~/crowsnest
-origin = https://github.com/mainsail-crew/crowsnest.git
-install_script = tools/pkglist.sh
-managed_services = crowsnest
-info_tags = 
-	desc=External: Crowsnest Webcam Manager
-
-[update_manager timelapse]
-type = git_repo
+channel = dev
+path = /home/pi/Klipper-Adaptive-Meshing-Purging
+origin = https://github.com/kyleisah/Klipper-Adaptive-Meshing-Purging.git
+managed_services = klipper
 primary_branch = main
-path = ~/moonraker-timelapse
-origin = https://github.com/mainsail-crew/moonraker-timelapse.git
-managed_services = klipper moonraker
-info_tags = 
-	desc=External: Timelapse Moonraker Plugin
 
-[update_manager LinearMovementAnalysis]
+[update_manager DynamicMacros]
 type = git_repo
-path = ~/klipper_linear_movement_analysis
+path = /home/pi/DynamicMacros
+origin = https://github.com/3DCoded/DynamicMacros.git
 primary_branch = main
-origin = https://github.com/worksasintended/klipper_linear_movement_analysis.git
-install_script = install.sh
-env = ~/klippy-env/bin/python
-requirements = requirements.txt
 is_system_service = False
-managed_services = 
-	klipper
-info_tags = 
-	desc=External: Linear Movement Analysis
-
-[update_manager KlipperScreen]
-type = git_repo
-path = ~/KlipperScreen
-origin = https://github.com/KlipperScreen/KlipperScreen.git
-virtualenv = ~/.KlipperScreen-env
-requirements = scripts/KlipperScreen-requirements.txt
-system_dependencies = scripts/system-dependencies.json
-managed_services = KlipperScreen
-pinned_commit = 71eef9ee1f23aa4fd6b68169cfe5dd7908e478b2
-info_tags = 
-	desc=External: KlipperScreen Touchscreen Interface
 
 [update_manager beacon]
 type = git_repo
 channel = dev
-path = ~/beacon
+path = /home/pi/beacon_klipper
 origin = https://github.com/beacon3d/beacon_klipper.git
 env = ~/klippy-env/bin/python
 requirements = requirements.txt
@@ -102,64 +62,20 @@ install_script = install.sh
 is_system_service = False
 managed_services = klipper
 info_tags = 
-	desc=External: Beacon Surface Scanner
-
-[history]
-
-[octoprint_compat]
-
-[update_manager klipper]
-channel = dev
-pinned_commit = b7233d1197d9a2158676ad39d02b80f787054e20
-
-[update_manager moonraker]
-channel = dev
-pinned_commit = 71f9e677b81afcc6b99dd5002f595025c38edc7b
-
-[authorization]
-cors_domains = 
-	http://app.fluidd.xyz
-	https://app.fluidd.xyz
-	https://my.mainsail.xyz
-	http://my.mainsail.xyz
-	http://*.local
-	http://*.lan
-trusted_clients = 
-	127.0.0.1
-	10.0.0.0/8
-	127.0.0.0/8
-	169.254.0.0/16
-	172.16.0.0/12
-	192.168.0.0/16
-	FE80::/10
-	::1/128
-	FD00::/8
+	desc=Beacon Surface Scanner
 
 [update_manager klipper_tmc_autotune]
 type = git_repo
 channel = dev
-path = ~/addon_plugins/klipper_tmc_autotune
+path = ~/klipper_tmc_autotune
 origin = https://github.com/andrewmcgr/klipper_tmc_autotune.git
 managed_services = klipper
 primary_branch = main
 install_script = install.sh
 
-[update_manager Fluidd]
-type = web
-repo = Rat-OS/fluidd
-path = ~/fluidd
-channel = stable
-
-[update_manager FluiddTheme]
-type = git_repo
-path = ~/printer_data/config/.fluidd-theme
-primary_branch = main
-origin = https://github.com/Rat-OS/fluidd-theme
-is_system_service = false
-
 [update_manager afc-software]
 type = git_repo
-path = ~/addon_plugins/AFC-Klipper-Add-On
+path = ~/addon-packages/AFC-Klipper-Add-On
 origin = https://github.com/ArmoredTurtle/AFC-Klipper-Add-On.git
 managed_services = klipper
 primary_branch = main
@@ -181,11 +97,11 @@ system_dependencies = system-dependencies.json
 primary_branch = main
 managed_services = klipper
 
-[update_manager klipper_auto_speed]
-type = git_repo
-path = ~/addon_plugins/klipper_auto_speed
-origin = https://github.com/anonoei/klipper_auto_speed.git
-primary_branch = main
-install_script = install.sh
-managed_services = klipper
+[update_manager mainsail]
+path = /home/pi/mainsail
+repo = mainsail-crew/mainsail
+channel = stable
+type = web
+persistent_files = 
+	config.json
 
