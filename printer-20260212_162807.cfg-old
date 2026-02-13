@@ -1,5 +1,3 @@
-[include mmu/base/*.cfg]
-[include mmu/optional/client_macros.cfg]
 [include .dynamicmacros.cfg]
 [include /home/pi/printer_data/config/custom/mcus/*]
 [include custom/default_includes.cfg]
