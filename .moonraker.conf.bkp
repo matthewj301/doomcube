@@ -73,16 +73,6 @@ managed_services = klipper
 primary_branch = main
 install_script = install.sh
 
-[update_manager afc-software]
-type = git_repo
-path = ~/addon-packages/AFC-Klipper-Add-On
-origin = https://github.com/ArmoredTurtle/AFC-Klipper-Add-On.git
-managed_services = klipper
-primary_branch = main
-is_system_service = False
-info_tags = 
-	desc=AFC Klipper Add On
-
 [spoolman]
 server = http://192.168.30.2:8000
 sync_rate = 10
@@ -104,16 +94,6 @@ channel = stable
 type = web
 persistent_files = 
 	config.json
-
-[update_manager helixscreen]
-type = zip
-channel = stable
-repo = prestonbrown/helixscreen
-path = /home/pi/helixscreen
-managed_services = helixscreen
-persistent_files = 
-	config/helixconfig.json
-	config/.disabled_services
 
 [update_manager happy-hare]
 type = git_repo
