@@ -1,3 +1,7 @@
 RatOS-*.cfg
 printer-*.cfg
 .theme
+config-*.zip
+mmu-*/
+*.png
+*.jsonl
