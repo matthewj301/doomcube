@@ -24,10 +24,10 @@ cors_domains =
 
 [octoprint_compat]
 
-[history]
-
 [file_manager]
 enable_object_processing = True
+
+[history]
 
 [update_manager klipper]
 report_anomalies = False
