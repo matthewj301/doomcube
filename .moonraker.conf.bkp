@@ -95,18 +95,6 @@ type = web
 persistent_files = 
 	config.json
 
-[update_manager happy-hare]
-type = git_repo
-path = /home/pi/Happy-Hare
-origin = https://github.com/moggieuk/Happy-Hare.git
-primary_branch = main
-managed_services = klipper
-
-[mmu_server]
-enable_file_preprocessor = True
-enable_toolchange_next_pos = True
-update_spoolman_location = True
-
 [update_manager KlipperScreen]
 type = git_repo
 path = /home/pi/KlipperScreen
@@ -115,4 +103,14 @@ env = /home/pi/.KlipperScreen-env/bin/python
 requirements = scripts/KlipperScreen-requirements.txt
 install_script = scripts/KlipperScreen-install.sh
 managed_services = KlipperScreen
+
+[update_manager afc-software]
+type = git_repo
+path = ~/AFC-Klipper-Add-On
+origin = https://github.com/ArmoredTurtle/AFC-Klipper-Add-On.git
+managed_services = klipper
+primary_branch = main
+is_system_service = False
+info_tags = 
+	desc=AFC Klipper Add On
 
