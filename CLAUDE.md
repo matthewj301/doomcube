@@ -9,6 +9,44 @@ Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
 - **Spoolman** filament tracking integration
 - Sensorless homing on X/Y
 
+## Hardware Summary
+
+- **Frame**: 300mm CoreXY
+- **Steppers X/Y**: LDO-42STH48-2804AH on TMC5160 at 2.6A, 48V, 0.075Ω sense resistor
+- **Steppers Z**: LDO-42STH48-2004AC on TMC2209, quad Z (Z/Z1/Z2/Z3)
+- **Toolhead**: Xol-Metrix (M2 hardware flex concern — SnappingTurtle cutter replacement on order, ETA ~mid-2026)
+- **Extruder**: Orbiter 2.0 (replaced LGX Lite Pro due to repeated motor thermal failures)
+- **Hotend**: Chube Compact ("Teakettle" / tk) — high flow, proven 54+ mm³/s
+- **Probe**: Beacon (contact mode)
+- **MCU toolboard**: EBB36 (aliased as `toolboard_t0`)
+- **AFC**: BoxTurtle (Turtle_1), 4 lanes, AFC Lite board, BTIO buffer board
+- **Primary materials**: ABS/ASA
+
+## Sensorless Homing Tuning
+
+- Uses `tmc_autotune` module — SGT values set in `custom/tuning/tmc_autotune.cfg`, not in sensorless homing configs
+- X motor connection: molex replaced with wagos (in-chamber) to fix intermittent connection issues
+- Y homing from extreme front (Y≈0) is sensitive to SGT threshold — too low causes false StallGuard triggers during long travel
+- tmc_autotune recommends higher homing speeds; tune SGT before reducing speed
+- `home_current` is intentionally commented out — user prefers homing at full run current
+
+## AFC Notes
+
+- BTIO buffer board has different pin mapping than stock TurtleNeck — `TN_ADV`/`TN_TRL` labels may not match advance/trailing function
+- Bowden length is 1885mm (hub to toolhead) — long path, calibration-sensitive
+- `AFC_Macro_Vars.cfg` brush/park/poop locations must respect `position_max` (300 for both X/Y) — brush_loc + brush_depth/2 must stay within bounds
+- Lane 1 has intermittent sensor issues (shows not ready when lanes 2-4 are fine)
+- Hub cutter hardware is present but disabled (`cut: False`) — user has mixed past experience with hub cutting reliability
+
+## Extruder Notes
+
+- **Orbiter 2.0** is the active extruder (replaced LGX Lite Pro due to repeated Bondtech motor thermal failures)
+- Orbiter 2.0 confirmed working well both with and without AFC
+- LGX Lite Pro config retained in `custom/extruders/lgx_lite_pro.cfg` but no longer included
+- Flow rate limit is primarily hotend melt capacity, not extruder — do not assume extruder specs limit flow
+- Sherpa Mini on K3 reliably pushes 70mm³/s; Chube Compact is the enabler
+- Do not cite generic extruder flow limits without real-world context
+
 ## Directory Structure
 
 ```
@@ -31,7 +69,7 @@ printer.cfg                  # Main config — includes everything, defines _PRI
 │   ├── default_includes.cfg # [respond], [pause_resume], [display_status], [exclude_object], [save_variables]
 │   ├── doomcube/            # Machine-specific: limits, steppers, bed_mesh, QGL, sensorless homing
 │   ├── toolheads/           # Toolhead config (currently xol.cfg)
-│   ├── extruders/           # Extruder config
+│   ├── extruders/           # Extruder config (active: orbiter_2.0.cfg)
 │   ├── fans/                # Hardware fan definitions ([fan_generic], [controller_fan], etc.)
 │   ├── leds/                # LED definitions
 │   ├── sensors/             # Temperature sensors (chamber thermistor, etc.)
