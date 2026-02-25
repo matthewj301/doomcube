@@ -75,7 +75,7 @@ install_script = install.sh
 
 [spoolman]
 server = http://192.168.30.2:8000
-sync_rate = 10
+sync_rate = 30
 
 [update_manager Klippain-ShakeTune]
 type = git_repo
