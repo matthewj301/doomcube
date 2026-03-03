@@ -67,7 +67,7 @@
             "map": "T2",
             "load": true,
             "prep": true,
-            "tool_loaded": true,
+            "tool_loaded": false,
             "loaded_to_hub": true,
             "material": "",
             "density": 1.24,
@@ -75,12 +75,12 @@
             "empty_spool_weight": 150.0,
             "spool_id": null,
             "color": "#57E389",
-            "weight": 734.8929575842049,
+            "weight": 617.2703747790079,
             "extruder_temp": null,
             "runout_lane": null,
-            "filament_status": "In Tool",
-            "filament_status_led": "#0000ff",
-            "status": "Tooled",
+            "filament_status": "Ready",
+            "filament_status_led": "#00cc00",
+            "status": "None",
             "dist_hub": 120.0,
             "td1_data": {}
         },
@@ -94,8 +94,8 @@
             "lane": 4,
             "map": "T3",
             "load": true,
-            "prep": true,
-            "tool_loaded": false,
+            "prep": false,
+            "tool_loaded": true,
             "loaded_to_hub": true,
             "material": null,
             "density": 1.24,
@@ -103,24 +103,24 @@
             "empty_spool_weight": 230.0,
             "spool_id": null,
             "color": "",
-            "weight": 683.8359927675025,
+            "weight": 365.2685110907412,
             "extruder_temp": null,
-            "runout_lane": "lane1",
-            "filament_status": "Ready",
-            "filament_status_led": "#00cc00",
+            "runout_lane": null,
+            "filament_status": "Not Ready",
+            "filament_status_led": "#ff0000",
             "status": "None",
             "dist_hub": 185.0,
             "td1_data": {}
         }
     },
     "system": {
-        "current_load": "lane3",
+        "current_load": "lane4",
         "num_units": 1,
         "num_lanes": 4,
         "num_extruders": 1,
         "extruders": {
             "extruder": {
-                "lane_loaded": "lane3"
+                "lane_loaded": "lane4"
             }
         },
         "bypass": {
