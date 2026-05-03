@@ -3,11 +3,13 @@
 ## Project Overview
 
 Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
-- **AFC** (Armored Turtle Filament Changer) multi-material system
+- **AFC** (Armored Turtle Filament Changer) multi-material system — **TEMPORARILY DISABLED** (see below)
 - **Beacon** probe (contact mode with thermal expansion compensation)
 - **KAMP** (Klipper Adaptive Meshing & Purging)
 - **Spoolman** filament tracking integration
 - Sensorless homing on X/Y
+
+> **⚠ AFC is currently disabled.** The AFC Lite board's USB-C port was damaged. A replacement is on order. The printer is running in passthrough (single-material) mode. AFC macros are guarded with `is defined` checks so they degrade gracefully. When the replacement board arrives, uncomment `[include AFC/*.cfg]` in printer.cfg and set `pause_on_runout: False` in filament_sensor.cfg.
 
 ## Directory Structure
 
