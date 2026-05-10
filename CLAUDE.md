@@ -106,26 +106,27 @@ Never rely on bare truthiness — non-empty strings (including `"False"`) are tr
 
 1. Clear state (CLEAR_PAUSE, RESET_MULTIPLIERS, BED_MESH_CLEAR, zero Z offset)
 2. G90, lights on, MAYBE_HOME
-3. Save material to variables
+3. Save material to variables, set MPC filament properties (if MPC active)
 4. PREHEAT (bed + hotend, chamber fans, optional TA_CHAMBER_HEAT for high-temp materials)
 5. Clean nozzle (if CLEAN_NOZZLE macro exists)
 6. Beacon Z calibration (if Beacon present)
 7. QGL or Z_TILT_ADJUST (auto-detected)
-8. BED_MESH_CALIBRATE ADAPTIVE=1
-9. MAYBE_LOAD_SKEW_CORRECTION
-10. Final Beacon Z calibration
-11. SET_VELOCITY_LIMIT ACCEL={travel_accel} — limit accel for travel section
-12. Park (AFC_PARK → SMART_PARK → PICK_PARK_LOCATION fallback)
-13. Heat hotend to final temp, load tool
-14. Park again post-toolchange
-15. Beacon thermal expansion compensation (if configured)
-16. LINE_PURGE
-17. SET_VELOCITY_LIMIT ACCEL={saved_accel} — restore full print accel
+8. CALIBRATE_BED_MESH (adaptive scan + deviation validation)
+9. Final Beacon Z calibration
+10. SET_VELOCITY_LIMIT ACCEL={travel_accel} — limit accel for travel section
+11. Park (AFC_PARK → SMART_PARK → PICK_PARK_LOCATION fallback)
+12. Heat hotend to final temp, load tool
+13. Park again post-toolchange
+14. Beacon thermal expansion compensation (if configured)
+15. LINE_PURGE
+16. SET_VELOCITY_LIMIT ACCEL={saved_accel} — restore full print accel
+17. MAYBE_LOAD_SKEW_CORRECTION
 18. Start print
 
 ## Known Quirks
 
-- `variable_skew_profile` is defined AFTER `gcode:` in `_PRINTER_VARS` (line 61). In Klipper, variables must be before the `gcode:` line. This may need to be moved up if skew loading fails at runtime.
 - `_FALLBACK_PURGE` is only used if KAMP's `LINE_PURGE` is not available.
 - AFC's `AFC_ENABLE_SKEW` / `AFC_DISABLE_SKEW` macros handle skew during tool changes independently.
 - The `dynamic_macros` directory uses a Klipper module that allows runtime macro reloading.
+- `error_on_unused_config_options` is currently `False` because MPC params exist in `tk.cfg` but extruder still runs PID from SAVE_CONFIG. Flip to `True` after running `MPC_CALIBRATE` + `SAVE_CONFIG`.
+- AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed.
