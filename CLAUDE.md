@@ -128,5 +128,6 @@ Never rely on bare truthiness — non-empty strings (including `"False"`) are tr
 - `_FALLBACK_PURGE` is only used if KAMP's `LINE_PURGE` is not available.
 - AFC's `AFC_ENABLE_SKEW` / `AFC_DISABLE_SKEW` macros handle skew during tool changes independently.
 - The `dynamic_macros` directory uses a Klipper module that allows runtime macro reloading.
-- `error_on_unused_config_options` is currently `False` because MPC params exist in `tk.cfg` but extruder still runs PID from SAVE_CONFIG. Flip to `True` after running `MPC_CALIBRATE` + `SAVE_CONFIG`.
+- `error_on_unused_config_options` is currently `False` — flip to `True` after running `MPC_CALIBRATE` + `SAVE_CONFIG`.
 - AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed.
+- **SAVE_CONFIG overrides config-level heater control**: `control = pid` (or `mpc`) in the SAVE_CONFIG block takes priority over config files. To switch modes, you must both set the new mode in config AND remove the old from SAVE_CONFIG — just adding params won't expose the new mode's commands (e.g., `MPC_CALIBRATE` is unavailable while PID is active in SAVE_CONFIG).
