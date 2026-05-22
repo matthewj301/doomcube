@@ -1,7 +1,7 @@
 [include mcu/AFC_Lite.cfg]
 
 [mcu Turtle_1]
-serial: /dev/serial/by-id/usb-Klipper_stm32h723xx_17003D000951333235393937-if00
+serial: /dev/serial/by-id/usb-Klipper_stm32h723xx_33002F000651333039393136-if00	# Change to `canbus_uuid: 1234567890` for CANbus setups
 
 [AFC_BoxTurtle Turtle_1]
 hub: Turtle_1
