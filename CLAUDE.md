@@ -30,7 +30,6 @@ printer.cfg                  # Main config — includes everything, defines _PRI
 │   │   ├── fast_QGL.cfg     # Fast quad gantry level
 │   │   └── dynamic_macros/
 │   │       └── toolhead_assisted_chamber_heating.cfg  # TA_CHAMBER_HEAT
-│   ├── dynamic_macros.cfg   # [include dynamic_macros/*.cfg] — loaded via dynamic_macros Klipper module
 │   ├── default_includes.cfg # [respond], [pause_resume], [display_status], [exclude_object], [save_variables]
 │   ├── doomcube/            # Machine-specific: limits, steppers, bed_mesh, QGL, sensorless homing
 │   ├── toolheads/           # Toolhead config (currently xol.cfg)
@@ -155,7 +154,7 @@ Never rely on bare truthiness — non-empty strings (including `"False"`) are tr
 - `_FALLBACK_PURGE` is only used if KAMP's `LINE_PURGE` is not available.
 - Happy Hare's `client_macros.cfg` is NOT included — it conflicts with our PAUSE/RESUME/CANCEL wrappers via `rename_existing`. HH hooks are called manually behind `printer.mmu is defined` guards.
 - Happy Hare's `variable_post_load_extension: 'CLEAN_NOZZLE'` calls our standalone CLEAN_NOZZLE macro after every tool load.
-- The `dynamic_macros` directory uses a Klipper module that allows runtime macro reloading.
+- The `dynamic_macros/` subdirectory under `macros/` is included via `custom/macros.cfg` as regular Klipper macros (no special module).
 - `error_on_unused_config_options` is currently `False` — flip to `True` after running `MPC_CALIBRATE` + `SAVE_CONFIG`.
 - AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed.
 - **SAVE_CONFIG overrides config-level heater control**: `control = pid` (or `mpc`) in the SAVE_CONFIG block takes priority over config files. To switch modes, you must both set the new mode in config AND remove the old from SAVE_CONFIG — just adding params won't expose the new mode's commands (e.g., `MPC_CALIBRATE` is unavailable while PID is active in SAVE_CONFIG).
