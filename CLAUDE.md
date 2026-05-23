@@ -3,14 +3,14 @@
 ## Project Overview
 
 Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
-- **Happy Hare** v3.42 MMU plugin — BoxTurtle (4-lane) with AFC-Lite board, turtleneck sync feedback, tip cutting
+- **Happy Hare** v3.42 MMU plugin — BoxTurtle (4-lane) with AFC-Lite board, FPS analog sync feedback, tip cutting
 - **FPS** (Filament Pressure Sensor) board — CAN bridge replacing U2C, USB hub for AFC-Lite
 - **Beacon** probe (contact mode with thermal expansion compensation)
 - **KAMP** (Klipper Adaptive Meshing & Purging)
 - **Spoolman** filament tracking integration
 - Sensorless homing on X/Y
 
-> **⚠ Happy Hare is being brought online.** FPS and AFC-Lite boards are flashed and connected. HH configs exist in `mmu/` on the printer (need `.mmu/` renamed to `mmu/`). Macros are updated with HH hooks but calibration has not been run yet. AFC plugin configs remain in `AFC/` but are disabled. See plan at `.claude/plans/` for full migration checklist.
+> **⚠ Happy Hare is being brought online.** FPS and AFC-Lite boards are flashed and connected. HH configs are in `mmu/`. FPS analog sync feedback (`fps:PA2`) is configured but needs `MMU_CALIBRATE_PSENSOR` calibration. Macros are updated with HH hooks. AFC plugin configs remain in `AFC/` but are disabled.
 
 ## Directory Structure
 
