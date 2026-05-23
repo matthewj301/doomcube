@@ -5,3 +5,4 @@ config-*.zip
 mmu-*/
 *.png
 *.jsonl
+.DS_Store
