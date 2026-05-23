@@ -3,6 +3,8 @@ printer-*.cfg
 .theme
 config-*.zip
 mmu-*/
+mmu/mmu_vars.cfg
+klipper-variables.cfg
 *.png
 *.jsonl
 .DS_Store
