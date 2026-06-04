@@ -36,7 +36,7 @@ printer.cfg                  # Main config — includes everything, defines _PRI
 │   ├── extruders/           # Extruder config
 │   ├── fans/                # Hardware fan definitions ([fan_generic], [controller_fan], etc.)
 │   ├── leds/                # LED definitions
-│   ├── sensors/             # Temperature sensors (chamber thermistor, etc.)
+│   ├── sensors/             # Temperature sensors (chamber thermistor) + verify_heater.cfg (thermal-runaway protection)
 │   ├── mcus/                # MCU board definitions (Octopus Pro, EBB36, RPi, FPS)
 │   ├── tuning/              # Input shaper, pressure advance tuning results
 │   └── probes/              # Probe hardware config
@@ -155,6 +155,11 @@ Never rely on bare truthiness — non-empty strings (including `"False"`) are tr
 - Happy Hare's `client_macros.cfg` is NOT included — it conflicts with our PAUSE/RESUME/CANCEL wrappers via `rename_existing`. HH hooks are called manually behind `printer.mmu is defined` guards.
 - Happy Hare's `variable_post_load_extension: 'CLEAN_NOZZLE'` calls our standalone CLEAN_NOZZLE macro after every tool load.
 - The `dynamic_macros/` subdirectory under `macros/` is included via `custom/macros.cfg` as regular Klipper macros (no special module).
-- `error_on_unused_config_options` is currently `False` — flip to `True` after running `MPC_CALIBRATE` + `SAVE_CONFIG`.
+- `error_on_unused_config_options` is `True` (flipped 2026-06-03 after MPC was calibrated + saved). Any newly-added unused config option will now fault at restart.
 - AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed.
 - **SAVE_CONFIG overrides config-level heater control**: `control = pid` (or `mpc`) in the SAVE_CONFIG block takes priority over config files. To switch modes, you must both set the new mode in config AND remove the old from SAVE_CONFIG — just adding params won't expose the new mode's commands (e.g., `MPC_CALIBRATE` is unavailable while PID is active in SAVE_CONFIG).
+- **Thermal-runaway protection** is explicit in `custom/sensors/verify_heater.cfg` (overrides Klipper's auto-generated defaults). Bed uses a longer `check_gain_time` (90s) so the slow 300mm@105°C bed doesn't false-trip.
+- **Unattended pause thermal/timeout behavior** (the hotend is the only real fire risk; bed/motors are not):
+  - MMU path (Happy Hare — the common runout/M600 trigger): hotend is cut by `mmu_parameters.cfg disable_heater` (600s / 10 min); bed + watercooled motors stay live until `timeout_pause` (43200s / 12h), then full shutdown. Bed is held hot this long deliberately to prevent warping.
+  - Non-MMU path (fleet machines w/o HH): our PAUSE macro calls `SET_IDLE_TIMEOUT TIMEOUT={pause_idle_timeout}` (25200s / 7h); RESUME restores the configured `idle_timeout`. When idle_timeout fires it runs `CANCEL_PRINT` (everything off) per `[idle_timeout]` in `utils.cfg`.
+  - `_PRINTER_VARS` `pause_standby_extruder_delta` / `pause_min_standby_temp` are still **unwired** (declared, not used) — the hotend is not dropped to a standby temp on pause, it's only cut by the timeout above.
