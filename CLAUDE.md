@@ -138,6 +138,7 @@ Never rely on bare truthiness — non-empty strings (including `"False"`) are tr
 
 Beacon path (this printer's active config):
 
+0. **Guard + early heat** (before homing): abort via `action_raise_error` if `HOTEND_TEMP < 150` (missing/cold-extrude protection); then `M140 S{bed_temp}` + `M104 S{warmup_hotend}` fired immediately so bed/hotend warm-up overlaps homing. On the Beacon path `warmup_hotend` = contact-cal temp (150 °C), not final print temp; PREHEAT (step 4) re-issues these idempotently.
 1. Reset state: CLEAR_PAUSE, RESET_MULTIPLIERS, BED_MESH_CLEAR, zero Z offset, G90
 2. Lights on, MAYBE_HOME
 3. Save material to `save_variables`; `_SET_MPC_MATERIAL` if MPC active
