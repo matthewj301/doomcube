@@ -3,7 +3,7 @@
 ## Project Overview
 
 Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
-- **Happy Hare** v3.42 MMU plugin — BoxTurtle (4-lane) with AFC-Lite board, FPS analog sync feedback, tip cutting. **Live and printing** (since 2026-05-24); FPS psensor calibrated 2026-06-01 (`sync_feedback_*` values in `mmu_parameters.cfg`).
+- **Happy Hare** v3.42 MMU plugin — BoxTurtle (4-lane) with AFC-Lite board, FPS analog sync feedback, tip cutting. **Live and printing** (since 2026-05-24); FPS psensor calibrated 2026-06-01, but its **neutral point was wrong** and hand-corrected 2026-08-11 (see Known Quirks). Analog cal values (`sync_feedback_analog_max_compression`/`_max_tension`/`_neutral_point`) live in `mmu_hardware.cfg` `[mmu_sensors]`; enable/buffer-range/multipliers in `mmu_parameters.cfg`.
 - **FPS** (Filament Pressure Sensor) board — CAN bridge replacing U2C, USB hub for AFC-Lite
 - **Beacon** probe (contact mode with thermal expansion compensation)
 - **KAMP** (Klipper Adaptive Meshing & Purging)
@@ -177,5 +177,7 @@ Non-Beacon path differences (fleet machines): plain `G28 Z`, PREHEAT goes straig
 - **`variable_user_post_load_extension: 'CLEAN_NOZZLE'`** in `mmu_macro_vars.cfg` calls our standalone CLEAN_NOZZLE macro after every tool load.
 - **LINE_PURGE is called unconditionally** in PRINT_START — there is no fallback branch. `_FALLBACK_PURGE` exists in `utils.cfg` but is NOT wired in; removing KAMP would break PRINT_START.
 - **Spoolman/Moonraker HH integration is broken**: `spoolman_push_gate_map` and `moonraker_push_lane_data` are not registered; every HH restart logs these errors. Config exists (`custom/macros/spoolman.cfg`) but the HH push path is non-functional.
-- AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed.
+- AFC's `trsync_update: False` — trsync values are managed globally in `[danger_options]` so they persist even if AFC is removed. `single_mcu_trsync_timeout` was raised to `1.0` (2026-08-11) to absorb transient AFC-Lite USB stalls during gear homing/preload (the board is on USB through the FPS hub; comms are otherwise healthy).
+- **FPS sync-feedback neutral is hand-set, not auto-calibrated.** HH's `MMU_CALIBRATE_SYNC_FEEDBACK` sets `neutral_point = (max_compression + max_tension)/2` — a pure ADC midpoint that is NOT the buffer's real rest. On this machine the buffer floats at the tension end (measured `value_raw ≈ 0.0064` idle and print-median), so the midpoint (0.0139) biased every reading ~0.88 toward tension and sync feedback never neutralized (rail-slamming, ±1.6% flow noise). `neutral_point` is manually overridden to `0.0064` in `mmu_hardware.cfg`. **Do NOT re-run the calibration and blindly save** — it clobbers neutral back to the bad midpoint. After any recal, re-read `filament_proportional.value_raw` at rest and hand-set neutral to it.
+- **Cutter departure must clear the plunger in X before moving in Y.** The Crossbow A4T cutter pin is at Xmin/front (`pin_loc_xy ≈ 1,30.5`); after the cut the toolhead evacuates to ~`(1,25)`. `post_form_tip_position` is set to `60,25,5` (in `mmu_macro_vars.cfg`) so the departure is a pure +X move away from the plunger; sending it straight to a back park (e.g. `0,295`) diagonals through the plunger's Y band at X≈1 and strikes it (lost steps). Keep the post-cut Y near the cut row.
 - The `dynamic_macros/` subdirectory under `macros/` is included via `custom/macros.cfg` as regular Klipper macros (no special module).
