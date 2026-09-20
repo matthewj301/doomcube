@@ -1,0 +1,107 @@
+{
+  "date": "2026-09-20",
+  "master": "doomcube",
+  "master_revision": "ec29a6c0855259e9929813935a6947f56aae2945",
+  "contract_version": 1,
+  "master_evidence": {
+    "reported_by": "user",
+    "passed": [
+      "non-MMU startup with slicer TOOL=1",
+      "automatic preheat SD hold and resume",
+      "normal cooldown",
+      "MMU startup"
+    ],
+    "not_demonstrated": [
+      "cancel during soak",
+      "timeout recovery",
+      "consumer physical operation"
+    ]
+  },
+  "shared_source_sha256": {
+    "custom/macros/python/print_start.py": "6f2ff267a1ad7d6e5cf51d01516250f23dbbf70597c2e6c1c1f53fde3a720622",
+    "custom/macros/python/chamber_heating.py": "9feca4ec636fbc19e6dc9e6de9329d5986f27103e5498160a5c2f97529a4b655",
+    "custom/macros/python/chamber_tick.py": "fd101d212888b7f4c26f7978cd54f1a7716bb3f247ec789ac757216cbe6153ac",
+    "custom/macros/python/notify.py": "f138d5a35a57336d89648542a00425eb2eaacf59d8ff3ef7834d8f39cf794985",
+    "custom/macros/python/alert_watch.py": "a3069b081ab1dc48e937caaed25374cf7d735085be6cf032d1003655a68898fd"
+  },
+  "interfaces": [
+    "PRINT_START",
+    "PRINT_END",
+    "PAUSE",
+    "RESUME",
+    "CANCEL_PRINT",
+    "PREHEAT",
+    "TA_CHAMBER_HEAT",
+    "TA_CHAMBER_STOP",
+    "COOLDOWN_SEQUENCE"
+  ],
+  "baseline_policy": "Original v1 establishment baseline retained; this record identifies the reviewed lifecycle adoption separately.",
+  "notification_transport": "Local console only until notification_name is configured.",
+  "consumers": {
+    "K3D": {
+      "status": "source-adopted; not deployed or physically qualified",
+      "template_count": 71,
+      "review": "One independent agent: no actionable regressions",
+      "preserved": [
+        "native Python macro architecture and constants",
+        "cold first home (bed heat only)",
+        "wipe -> final contact -> mesh ordering",
+        "hotend off during user pause",
+        "motors enabled after normal completion",
+        "legacy cooldown QUICK=1 controlled / QUICK=0 cancellation",
+        "EXTRUDER_TEMP alias on TA_CHAMBER_HEAT"
+      ],
+      "pending": [
+        "SSH host and installed firmware/include verification",
+        "reload and MMU/non-MMU/cancel/timeout/thermal qualification"
+      ],
+      "commit": "056974574cf0ab1c8f5969431a6df3f009346c51"
+    },
+    "rat-race": {
+      "status": "source-adopted; not deployed or physically qualified",
+      "template_count": 77,
+      "review": "One independent agent: retained original homing variable spelling after review; no outstanding findings",
+      "installed_syntax": {
+        "host": "pi@192.168.50.95",
+        "kalico": "v2026.04.00-9-g9663dfda",
+        "python": "3.9.2",
+        "jinja": "3.1.5",
+        "happy_hare": "a880ac0adccf532cf98a20567c47e10efdee5576",
+        "result": "77 templates compile; native helper API and HH cancel wrapper inspected; no runtime macro execution"
+      },
+      "live_comparison": "Relevant custom macros and printer.cfg matched local baseline70b2dbe before port; remote checkout unchanged.",
+      "preserved": [
+        "AWD sync via Beacon",
+        "Z tilt",
+        "CLEAN_NOZZLE SKIP_HEATING=1 followed by contact-temperature wait",
+        "explicit HH save and restore",
+        "both-branch standby temperature and four-hour pause timeout",
+        "motors enabled after normal completion",
+        "root saved-variable ownership",
+        "optional empty fan names and fallback purge"
+      ],
+      "pending": [
+        "reload and MMU/non-MMU/cancel/timeout/thermal qualification"
+      ],
+      "commit": "0c86a6bacba1231ea9b64e8c70761b4ac9ad2f46"
+    }
+  },
+  "mini_trip": {
+    "status": "pending; no runtime macros changed",
+    "blocker": "Installed RatOS lifecycle/probe dependencies and rebuilt Kalico target are not available. Existing ZeroClick helpers depend on external RatOS source. Resolve ownership and calibration migration before enabling a new lifecycle.",
+    "needed": "SSH address/current rebuilt target and installed dependency evidence"
+  },
+  "excluded": [
+    "snapmaker-u1-config",
+    "Positron"
+  ],
+  "verification": {
+    "behavioral_tests": 61,
+    "master_templates": 69,
+    "consumer_templates": {
+      "K3D": 71,
+      "rat-race": 77
+    },
+    "result": "PASS; source checks and installed Rat Race template syntax only"
+  }
+}
