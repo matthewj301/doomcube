@@ -1,0 +1,34 @@
+{
+  "role": "master",
+  "capabilities": {
+    "firmware": "Kalico",
+    "lifecycle_language": "Jinja",
+    "mmu": "Happy Hare / BoxTurtle",
+    "probe": "Beacon",
+    "leveling": "QGL"
+  },
+  "exceptions": [
+    {
+      "behavior": "purge",
+      "decision": "LINE_PURGE is a required KAMP dependency; existing fallback is not wired into PRINT_START",
+      "evidence": "custom/macros/print.cfg"
+    },
+    {
+      "behavior": "pause/resume",
+      "decision": "HH owns resume position restoration; do not add an explicit second restore",
+      "evidence": "docs/agent/operating-context.md"
+    },
+    {
+      "behavior": "saved variables",
+      "decision": "Resolve MMU-defined save_variables target from active include chain; do not assume root klipper-variables.cfg is active",
+      "evidence": "custom/default_includes.cfg"
+    }
+  ],
+  "printer": "doomcube",
+  "contract_version": 1,
+  "master_repo": "../doomcube",
+  "contract_path": "docs/fleet/v1/contract.md",
+  "entrypoint": "printer.cfg",
+  "printer_config_root": "/home/pi/printer_data/config",
+  "evidence_status": "repository inspection only; not live validation"
+}

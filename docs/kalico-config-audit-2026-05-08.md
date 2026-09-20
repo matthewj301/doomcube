@@ -1,5 +1,7 @@
 # Kalico Configuration Audit — Portable Findings
 
+> Historical findings dated 2026-05-08, not an active task list or proof of deployed settings. Verify current includes, firmware support and measured tuning evidence before adopting examples.
+
 Findings from a deep audit of a Kalico CoreXY printer config. These apply to any Kalico printer with similar hardware (Beacon probe, TMC drivers, CPAP fan). Items are grouped by category with exact config syntax.
 
 ---

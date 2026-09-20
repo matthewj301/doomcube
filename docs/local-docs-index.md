@@ -1,6 +1,6 @@
 # Local docs index — Kalico & Beacon
 
-Kalico and Beacon source/docs are cloned locally under `~/git/`. Read them with the Read tool instead of WebFetching `klipper3d.org`, `kalico.gg`, or `docs.beacon3d.com`.
+Kalico and Beacon source/docs are cloned locally under `~/git/`. Use available file/search tools first. Check the local revision against the target firmware; local clones are not automatically current. Consult official sources when local evidence is insufficient.
 
 ## Kalico (Klipper fork)
 
@@ -53,4 +53,4 @@ To refresh: `cd ~/git/beacon_klipper && git pull` and `cd ~/git/beacon_docs && g
 
 ## Related index
 
-`~/git/K3D/docs/local-docs-index.md` is the canonical version of this file (annotated for K3D's specific config). It and this file are kept in sync manually — if you find a more useful pointer while answering a question, update both.
+`~/git/K3D/docs/local-docs-index.md` is the canonical version of this file (annotated for K3D's specific config). This is a local adaptation. Cross-repository synchronization is a separate task; do not modify K3D merely to maintain Doomcube instructions.

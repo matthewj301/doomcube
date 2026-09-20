@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "master": "doomcube",
+  "established": "2026-09-20",
+  "git_head": "2101f496ef60a3bef22438f212de666f8e5c5bde",
+  "source_sha256": {
+    "custom/macros/fans.cfg": "afd217174bdea12c1cc8ee77a8ee61822eed79e0d45815d1936f69822389de03",
+    "custom/macros/heating_cooling.cfg": "a79917d4446ddf967e02208d3d358851153fb79fb392db7668f358e8fcee66b0",
+    "custom/macros/homing.cfg": "f37c45ed4d6ded11027c26f75acf017821b9f121830b786278e25b2817bbe2c8",
+    "custom/macros/park.cfg": "d5880b277dadbbd011f5cdbde8db632c5245e4010e98e03829784786f4355c0d",
+    "custom/macros/print.cfg": "a3b9157b1c38895b9a6e3ff199abfcf1bd45b76a038850557ac2c3ef4b4e9d14",
+    "custom/macros/thermal_expansion_compensation.cfg": "391dfd43b915372506f9a01fc810dcc59618414f31c50e5c8247fbcfcc871f4f",
+    "custom/macros/utils.cfg": "ca4511c4565ab8bcace0c94ab7f09aaa65ba9f05045164e5641519b0703b6c18",
+    "custom/macros/python/chamber_heating.py": "2314babd38a5e8b73b9cc066a540184be3f2e35997a6a02e516eade7b38c0062"
+  },
+  "core_macros": [
+    "PRINT_START",
+    "PRINT_END",
+    "PAUSE",
+    "RESUME",
+    "CANCEL_PRINT",
+    "PREHEAT",
+    "COOLDOWN_SEQUENCE"
+  ],
+  "promotion_status": "candidate-not-qualified"
+}
