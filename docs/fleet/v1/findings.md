@@ -36,3 +36,12 @@ Run tests using Python with Jinja2 3.1.6 installed:
 `python -m unittest discover -s scripts/fleet -p 'test_*.py'`.
 The scanner itself uses only the standard library. Self-review and local rendering
 are not independent review, installed firmware validation, or physical qualification.
+
+
+## Subsequent lifecycle candidate
+
+The lifecycle implementation and four independent stage reviews are recorded in
+[lifecycle-candidate-2026-09-20.md](lifecycle-candidate-2026-09-20.md). That candidate
+adds behavioral regression coverage and installed-interpreter syntax checks; it is
+not deployed or physically qualified. Counts above describe the earlier baseline
+establishment run, not the expanded candidate. Baseline hashes remain unchanged.

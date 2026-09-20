@@ -15,32 +15,39 @@ Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
 - Sensorless homing on X/Y
 - **A4T toolhead** (`custom/toolheads/A4T.cfg` is the active include; `xol.cfg` and `calamity.cfg` are inactive alternates)
 
-## PRINT_START Flow
+## PRINT_START Flow (candidate lifecycle change, not deployed)
 
-Beacon path (this printer's active config):
+The 2026-09-20 candidate uses Kalico native Python orchestration for interruptible
+preheat. `PRINT_START_PREFLIGHT` rejects invalid temperatures/material/tool requests
+and missing required purge/fan dependencies before heat or motion. Disabled/absent
+MMUs use the single-tool path; enabled HH keeps ownership of toolchange and pause
+position. `LINE_PURGE` remains required.
 
-0. **Guard + early heat** (before homing): abort via `action_raise_error` if `HOTEND_TEMP < 150` (missing/cold-extrude protection); then `M140 S{bed_temp}` + `M104 S{warmup_hotend}` fired immediately so bed/hotend warm-up overlaps homing. On the Beacon path `warmup_hotend` = contact-cal temp (150 °C), not final print temp; PREHEAT (step 4) re-issues these idempotently.
-1. Reset state: CLEAR_PAUSE, RESET_MULTIPLIERS, BED_MESH_CLEAR, zero Z offset, G90
-2. Lights on, MAYBE_HOME
-3. Save material to `save_variables`; `_SET_MPC_MATERIAL` if MPC active
-4. PREHEAT — hotend goes to `BEACON_VARS.beacon_contact_calibration_temp` (150 °C), NOT the final print temp; bed/chamber per params; then SET_SLOW_CHAMBER_FAN_SPEED
-5. `G28 Z METHOD=CONTACT CALIBRATE=1` — full Beacon model + Z offset, done hot
-6. QUAD_GANTRY_LEVEL or Z_TILT_ADJUST (auto-detected; QGL here)
-7. CALIBRATE_BED_MESH (adaptive scan + deviation validation)
-8. CLEAN_NOZZLE (if the macro is defined — it is, in `mmu_macros.cfg`)
-9. `G28 Z METHOD=CONTACT CALIBRATE=0` — final Z offset; then `M104` starts ramping hotend to print temp
-10. `SET_VELOCITY_LIMIT ACCEL={travel_accel}` — limit accel for the travel section
-11. Park (SMART_PARK if KAMP provides it, else PICK_PARK_LOCATION)
-12. `M109` — wait for final hotend temp
-13. `T{initial_tool}` if `gcode_macro T0` is defined (HH provides T0–T3); else "No MMU detected" and skip. There is no HH-specific startup sequence beyond this.
-14. Park again post-toolchange
-15. `_BEACON_SET_NOZZLE_TEMP_OFFSET` (thermal expansion compensation, if configured)
-16. LINE_PURGE (called unconditionally — KAMP must be present; see Known Quirks)
-17. `SET_VELOCITY_LIMIT ACCEL={saved_accel}` — restore full print accel
-18. MAYBE_LOAD_SKEW_CORRECTION
-19. `SAVE_VARIABLE VARIABLE=is_printing_gcode VALUE=True`, start print
+`PRINT_START` holds an active virtual-SD stream with M25 (not PAUSE), records its
+ownership, runs `_PRINT_START_BEGIN`, then schedules PREHEAT. The begin phase clears
+old skew/filter timer/offset state and preserves early bed heating and Beacon contact
+temperature. Every chamber timer emits at most one mixing segment and restores motion
+state/acceleration. Heater readiness and soak are checked on subsequent timer ticks.
 
-Non-Beacon path differences (fleet machines): plain `G28 Z`, PREHEAT goes straight to final hotend temp, CLEAN_NOZZLE runs before leveling instead of after bed mesh.
+After successful preheat, `_PRINT_START_AFTER_PREHEAT` retains contact calibration →
+QGL/Z tilt → adaptive mesh → nozzle clean → final contact → final hotend heat → tool
+selection → readiness check → purge → skew load. Only successful continuation releases
+the owned SD stream with M24. A tool-load pause aborts startup before purge. During
+scheduled startup use CANCEL_PRINT or TA_CHAMBER_STOP; regular PAUSE/RESUME rejects
+this special SD hold rather than creating a second position snapshot.
+
+PREHEAT QUICK=0 now returns after scheduling; callers must not assume a subsequent
+line waits for heating. Only the master PRINT_START continuation is integrated here.
+Consumers require a coordinated lifecycle migration. PREHEAT's omitted bed/chamber
+targets remain zero; TA_CHAMBER_HEAT supplies its distinct chamber defaults. QUICK=1
+sets targets without scheduling. TIMEOUT bounds wall-clock warmup/soak; ON_TIMEOUT
+is abort by default. Explicit continue permits a missed chamber/soak target only
+when bed and hotend temperatures are ready. PRINT_START always uses the abort policy.
+
+Live baseline read on 2026-09-20: config ce5358d, Kalico 29e8ef41, HH a880ac0; printer
+idle/ready with only managed mmu_vars modified. Candidate templates were compiled in
+the installed interpreter, but no restart, live execution or physical qualification
+was performed. See `docs/fleet/v1/lifecycle-candidate-2026-09-20.md` for release evidence.
 
 ## Known Quirks
 
@@ -54,7 +61,7 @@ Non-Beacon path differences (fleet machines): plain `G28 Z`, PREHEAT goes straig
 - **HH hooks in our PAUSE/RESUME/CANCEL** (all behind `printer.mmu is defined and printer.mmu.enabled`):
   - PAUSE: `_MMU_SAVE_POSITION` → `PAUSE_BASE` → `_MMU_PARK OPERATION="pause"`. HH owns parking + position save/restore — do NOT add our own park/SAVE_GCODE_STATE in the MMU branch or it double-parks and corrupts the saved position.
   - RESUME: reheat + reapply Beacon offset while parked, then `RESUME_BASE`; HH restores the toolhead position itself. Do NOT restore position here.
-  - CANCEL_PRINT: `MMU_TTG_MAP RESET=1 QUIET=1`.
+  - Candidate CANCEL_PRINT: heater shutdown and base cancellation precede optional cleanup; no travel/homing. Cancel parking is removed from all three owned HH enable lists; pause/toolchange parking stays enabled. `MMU_TTG_MAP RESET=1 QUIET=1` remains after mandatory shutdown.
 - **`variable_user_post_load_extension: 'CLEAN_NOZZLE'`** in `mmu_macro_vars.cfg` calls our standalone CLEAN_NOZZLE macro after every tool load.
 - **LINE_PURGE is called unconditionally** in PRINT_START — there is no fallback branch. `_FALLBACK_PURGE` exists in `utils.cfg` but is NOT wired in; removing KAMP would break PRINT_START.
 - Spoolman integration config is in `custom/macros/spoolman.cfg`; see the reported status in Project Overview above.

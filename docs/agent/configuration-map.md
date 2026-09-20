@@ -19,7 +19,9 @@ printer.cfg                  # Main config — includes everything, defines _PRI
 │   │   ├── thermal_expansion_compensation.cfg  # Beacon nozzle thermal expansion (from YanceyA/BeaconPrinterTools); BEACON_VARS
 │   │   ├── spoolman.cfg     # Spoolman integration
 │   │   ├── fast_QGL.cfg     # Overrides [gcode_macro QUAD_GANTRY_LEVEL] with fast version
-│   │   ├── python/          # chamber_heating.py (helper for dynamic macro)
+│   │   ├── preflight.cfg    # early input/capability checks; post-tool readiness gate
+│   │   ├── notifications.cfg # local alerts and optional Moonraker notifier transport
+│   │   ├── python/          # startup, scheduled chamber controller and alert helpers
 │   │   └── dynamic_macros/
 │   │       └── toolhead_assisted_chamber_heating.cfg  # TA_CHAMBER_HEAT
 │   ├── default_includes.cfg # [respond], [pause_resume], [display_status], [exclude_object], [save_variables]
