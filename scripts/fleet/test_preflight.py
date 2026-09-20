@@ -17,14 +17,30 @@ class PreflightTests(unittest.TestCase):
     def check(self):
         return render('PRINT_START_PREFLIGHT', self.p, self.params, 'custom/macros/preflight.cfg')
 
-    def test_no_mmu_and_disabled_mmu(self):
-        self.check()
-        self.p['mmu'] = {'enabled': False}
+    def test_nonzero_slicer_slot_without_enabled_tool_system(self):
+        for mmu in (None, {'enabled': False}):
+            with self.subTest(mmu=mmu):
+                self.setUp()
+                if mmu is not None:
+                    self.p['mmu'] = mmu
+                    self.p['gcode']['commands'].update(T0=None, T1=None)
+                self.params.update(HOTEND_TEMP='280', BED_TEMP='105',
+                                   TARGET_CHAMBER_TEMP='40', MATERIAL='ABS', TOOL='1')
+                self.check()
+                self.p['gcode_macro _PRINT_START_STATE']['params'] = self.params
+                commands = render('_PRINT_START_AFTER_PREHEAT', self.p)
+                self.assertFalse(any(c.startswith('T') and c[1:].isdigit() for c in commands))
+                self.assertFalse(any(c.startswith('MMU ') for c in commands))
+
+    def test_non_mmu_tool_system_still_requires_registered_tool(self):
         self.p['gcode']['commands']['T0'] = None
-        self.check()
         self.params['TOOL'] = '1'
-        with self.assertRaisesRegex(ValueError, 'without an enabled'):
+        with self.assertRaisesRegex(ValueError, 'unavailable'):
             self.check()
+        self.p['gcode']['commands']['T1'] = None
+        self.check()
+        self.p['gcode_macro _PRINT_START_STATE']['params'] = self.params
+        self.assertIn('T1', render('_PRINT_START_AFTER_PREHEAT', self.p))
 
     def test_enabled_mmu_requires_requested_tool(self):
         self.p['mmu'] = {'enabled': True}
