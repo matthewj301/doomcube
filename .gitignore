@@ -8,3 +8,11 @@ klipper-variables.cfg
 *.png
 *.jsonl
 .DS_Store
+
+# Local editor and interpreter artifacts
+.idea/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+/.codex/config.toml
