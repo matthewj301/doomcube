@@ -1,6 +1,8 @@
 # Master findings and promotion status — 2026-09-20
 
-Candidate baseline only. No consumer macro port or live deployment was performed.
+Historical establishment baseline. At that stage no consumer macro port or live deployment was performed.
+Current lifecycle adoption and user-reported production results are recorded in
+[consumer adoption](consumer-adoption-2026-09-20.json).
 This is the current disposition of findings from establishing the shared layer;
 it is not a complete firmware audit or a standing assignment during unrelated work.
 
@@ -30,7 +32,7 @@ Verification performed:
 The eight-file source baseline intentionally retains its pre-fix hash for homing.
 The scanner reports one changed master file. Do not repin merely to silence that
 finding; repin only with the evidence needed for the intended adoption stage.
-All runtime macros in K3D, Rat Race and Mini-Trip remain unchanged.
+At baseline establishment, runtime macros in K3D, Rat Race and Mini-Trip were unchanged.
 
 Run tests using Python with Jinja2 3.1.6 installed:
 `python -m unittest discover -s scripts/fleet -p 'test_*.py'`.
@@ -43,5 +45,7 @@ are not independent review, installed firmware validation, or physical qualifica
 The lifecycle implementation and four independent stage reviews are recorded in
 [lifecycle-candidate-2026-09-20.md](lifecycle-candidate-2026-09-20.md). That candidate
 adds behavioral regression coverage and installed-interpreter syntax checks; it is
-not deployed or physically qualified. Counts above describe the earlier baseline
+not deployed or physically qualified at the time of that candidate record. The later
+user-reported production validation and consumer source ports are recorded in the
+adoption record linked above. Counts above describe the earlier baseline
 establishment run, not the expanded candidate. Baseline hashes remain unchanged.
