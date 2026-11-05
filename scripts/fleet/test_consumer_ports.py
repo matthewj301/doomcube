@@ -82,8 +82,12 @@ class K3PortTests(unittest.TestCase):
         self.assertLess(r.out.index('_CLEAR_PRINT_SKEW'),r.out.index('MAYBE_HOME'))
         r.out.clear()
         r.macro('_PRINT_START_AFTER_PREHEAT')
-        self.assertLess(r.out.index('WIPE_NOZZLE'),r.out.index('G28 Z METHOD=CONTACT CALIBRATE=0'))
-        self.assertLess(r.out.index('G28 Z METHOD=CONTACT CALIBRATE=0'),r.out.index('BED_MESH_CALIBRATE ADAPTIVE=1'))
+        homes = [i for i, command in enumerate(r.out) if command == 'G28 Z METHOD=CONTACT CALIBRATE=0']
+        self.assertEqual(len(homes), 2)
+        self.assertLess(r.out.index('Z_TILT_ADJUST'), homes[0])
+        self.assertLess(homes[0], r.out.index('WIPE_NOZZLE'))
+        self.assertLess(r.out.index('WIPE_NOZZLE'), homes[1])
+        self.assertLess(homes[1], r.out.index('BED_MESH_CALIBRATE ADAPTIVE=1'))
 
     def test_pause_keeps_heater_off_and_single_firmware_return(self):
         r=ConsumerRuntime('K3D')
@@ -119,7 +123,10 @@ class RatRacePortTests(unittest.TestCase):
         r.macro('_PRINT_START_AFTER_PREHEAT')
         wipe=r.out.index('CLEAN_NOZZLE SKIP_HEATING=1')
         wait=r.out.index('TEMPERATURE_WAIT SENSOR=extruder MINIMUM=148')
-        contact=r.out.index('G28 Z METHOD=CONTACT CALIBRATE=0')
+        contact=r.out.index('G28 Z METHOD=CONTACT CALIBRATE=0', wait)
+        first_contact=r.out.index('G28 Z METHOD=CONTACT CALIBRATE=0')
+        self.assertLess(r.out.index('Z_TILT_ADJUST'), first_contact)
+        self.assertLess(first_contact, r.out.index('CALIBRATE_BED_MESH'))
         self.assertLess(wipe,wait)
         self.assertLess(wait,contact)
         self.assertLess(contact,r.out.index('M104 S260.0'))
