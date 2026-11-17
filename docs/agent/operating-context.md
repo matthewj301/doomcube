@@ -18,7 +18,7 @@ Klipper/Kalico firmware configuration for a CoreXY 3D printer ("Doomcube") with:
 ## PRINT_START Flow (candidate lifecycle change, not deployed)
 
 The 2026-09-20 candidate uses Kalico native Python orchestration for interruptible
-preheat. `PRINT_START_PREFLIGHT` rejects invalid temperatures/material/tool requests
+preheat. `PRINT_START_PREFLIGHT` rejects invalid temperatures/material/tool/filament-density requests
 and missing required purge/fan dependencies before heat or motion. Disabled/absent
 MMUs use the single-tool path; enabled HH keeps ownership of toolchange and pause
 position. `LINE_PURGE` remains required.
@@ -52,6 +52,7 @@ was performed. See `docs/fleet/v1/lifecycle-candidate-2026-09-20.md` for release
 ## Known Quirks
 
 - **SAVE_CONFIG overrides config-level heater control**: `control = pid` (or `mpc`) in the SAVE_CONFIG block takes priority over config files. Switching modes requires reconciling both config and the saved control value. The root prohibition on hand-editing SAVE_CONFIG still applies: use the supported calibration/save workflow; if manual removal is necessary, obtain an explicit exception before editing that block — just adding params won't expose the new mode's commands (e.g., `MPC_CALIBRATE` is unavailable while PID is active in SAVE_CONFIG). Current state: extruder `control = mpc`, bed `control = pid`.
+- **MPC material properties come from PRINT_START** (2026-11-16): OrcaSlicer sends `MATERIAL` and `FILAMENT_DENSITY` (profile `filament_density`, its single owner). `_SET_MPC_MATERIAL` uses that density (fallback: `[extruder] filament_density`) and looks up heat capacity by material: the mean cp from ambient to print temperature, sources in [mpc-heat-capacity.md](../mpc-heat-capacity.md). Do not reintroduce a density table or room-temperature cp values.
 - **`error_on_unused_config_options` is `True`** (flipped 2026-06-03 after MPC was calibrated + saved). Any newly-added unused config option will fault at restart.
 - **Thermal-runaway protection** is explicit in `custom/sensors/verify_heater.cfg` (overrides Klipper's auto-generated defaults). Bed uses a longer `check_gain_time` (90s) so the slow 300mm@105°C bed doesn't false-trip.
 - **Unattended pause thermal/timeout behavior** (preserve the deliberate timeout policy; this is not a safety certification):
