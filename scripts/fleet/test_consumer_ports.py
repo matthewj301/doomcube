@@ -212,5 +212,54 @@ class SharedPortTests(unittest.TestCase):
                 armed=next(i for i,c in enumerate(r.out) if c.startswith('UPDATE_DELAYED_GCODE ID=FILTER_DELAYED_STOP DURATION=') and not c.endswith('=0'))
                 self.assertLess(r.out.index('CHAMBER_HEATING_FANS_OFF'),armed)
 
+
+class MpcDensityPortTests(unittest.TestCase):
+    """Both consumers forward the slicer's FILAMENT_DENSITY to MPC and fall back
+    to the [extruder] config default when it is absent."""
+
+    def run_start(self, repo, density):
+        r=ConsumerRuntime(repo)
+        r.p['configfile']['settings']['extruder'].update(control='mpc', filament_density=1.07)
+        params=dict(r.p['gcode_macro _PRINT_START_STATE']['params'], MATERIAL='ABS-MD-GF15')
+        if density is not None:
+            params['FILAMENT_DENSITY']=density
+        r.p['gcode_macro _PRINT_START_STATE']['params']=params
+        r.macro('_PRINT_START_AFTER_PREHEAT')
+        call=next(c for c in r.out if c.startswith('_SET_MPC_MATERIAL'))
+        r.out.clear()
+        fields=dict(kv.split('=',1) for kv in shlex.split(call)[1:])
+        r.macro('_SET_MPC_MATERIAL',fields)
+        line=next(c for c in r.out if c.startswith('MPC_SET'))
+        return dict(kv.split('=') for kv in line.split()[1:])
+
+    def test_consumers_forward_slicer_density(self):
+        for repo in ('K3D','rat-race'):
+            with self.subTest(repo=repo):
+                got=self.run_start(repo,'1.23')
+                self.assertEqual(float(got['FILAMENT_DENSITY']),1.23)
+                self.assertEqual(float(got['FILAMENT_HEAT_CAPACITY']),1.65)
+
+    def test_consumers_match_master_heat_capacity_table(self):
+        from macro_test_support import render, state
+        materials=('PLA','ABS','ASA','ABS-MD-GF15','PETG','PET-CF','PC','PC-CF','PA','NYLON','PA-CF','PA-GF','TPU','HIPS')
+        def capacity(commands):
+            line=next(c for c in commands if c.startswith('MPC_SET'))
+            return float(dict(kv.split('=') for kv in line.split()[1:])['FILAMENT_HEAT_CAPACITY'])
+        p=state(); p['configfile']['settings']['extruder']={'control':'mpc','filament_density':1.07}
+        master={m: capacity(render('_SET_MPC_MATERIAL',p,{'MATERIAL':m},'custom/macros/utils.cfg')) for m in materials}
+        for repo in ('K3D','rat-race'):
+            r=ConsumerRuntime(repo)
+            r.p['configfile']['settings']['extruder'].update(control='mpc', filament_density=1.07)
+            for m in materials:
+                with self.subTest(repo=repo, material=m):
+                    r.out.clear()
+                    r.macro('_SET_MPC_MATERIAL',{'MATERIAL':m})
+                    self.assertEqual(capacity(r.out), master[m])
+
+    def test_consumers_fall_back_to_extruder_config_density(self):
+        for repo in ('K3D','rat-race'):
+            with self.subTest(repo=repo):
+                self.assertEqual(float(self.run_start(repo,None)['FILAMENT_DENSITY']),1.07)
+
 if __name__=='__main__': unittest.main()
 

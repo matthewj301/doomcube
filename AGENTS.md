@@ -45,6 +45,7 @@ Keep this entry near 700 words; retain safeguard triggers when moving detail.
 
 | Task | Smallest useful reference set |
 | --- | --- |
+| Pick up assigned work | [Open issues](docs/open-issues.md): entries there are assignments, unlike audits |
 | Locate config, hardware, MCU or includes | [Configuration map](docs/agent/configuration-map.md), then active config |
 | Any macro edit | [Macro conventions](docs/agent/macro-conventions.md), affected macro and callers |
 | PRINT_START, Beacon, heaters, pause/resume, MMU, FPS, cutter, Spoolman | [Operating context](docs/agent/operating-context.md), conventions for macro edits, relevant active config |

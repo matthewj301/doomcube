@@ -1,0 +1,44 @@
+{
+ "date": "2026-11-16",
+ "change": "mpc-filament-density-and-heat-capacity",
+ "master": "doomcube",
+ "contract_version": 1,
+ "summary": "PRINT_START gains optional FILAMENT_DENSITY (slicer filament_density, single owner), validated by PRINT_START_PREFLIGHT (0.5-3.0 g/cm3) and forwarded to _SET_MPC_MATERIAL; per-material density table removed; fallback is [extruder] filament_density. Heat-capacity table replaced with mean-cp values (docs/mpc-heat-capacity.md), ABS-MD-GF15 added, unknown fallback 1.50 -> 1.80.",
+ "interfaces": [
+  "PRINT_START (new optional FILAMENT_DENSITY)",
+  "PRINT_START_PREFLIGHT",
+  "_SET_MPC_MATERIAL (FILAMENT_DENSITY param; density table removed)"
+ ],
+ "slicer_caller": "OrcaSlicer machine_start_gcode for Doomcube 0.4/0.5, Annex K3, RatRig V-Core 3.1 adds FILAMENT_DENSITY={filament_density[current_extruder]} (orcaslicer_cleaner sweep plan; applied separately with OrcaSlicer closed). Until then printers use the [extruder] fallback.",
+ "master_source_sha256": {
+  "custom/macros/utils.cfg": "70d0c224ca81d0610f752fbf2f836bd02ec4b3c39983d6a4cbb25635d192e973",
+  "custom/macros/print.cfg": "2bebfb2027dc978826cae2520abe7a0585acefaf4e072434b7eaa2223bf1e846",
+  "custom/macros/preflight.cfg": "a58fd491e59f884e4e4afc3141e42ccf09b180e0bf299a62ff97d45c382b8919"
+ },
+ "verification": {
+  "stage": "source review + local template rendering (Jinja 3.1.6, Kalico-pinned); not installed-version, live or physical",
+  "tests": "scripts/fleet: test_mpc.py (6), test_preflight.py density cases, test_consumer_ports.py MpcDensityPortTests (3, incl. master/consumer heat-capacity table equality). Consumer tests failed against the pre-port consumers and pass after. 2 pre-existing CANCEL_PRINT lifecycle errors unrelated (docs/open-issues.md).",
+  "review": "One independent agent (Sonnet): no high-severity findings; low-severity follow-ups recorded in docs/open-issues.md (master), K3D and rat-race docs/open-issues.md.",
+  "checker": "scripts/fleet/check.py summary unchanged by this change (INCOMPLETE / NOT_EVALUATED as before)."
+ },
+ "consumers": {
+  "K3D": {
+   "status": "source-adopted; not deployed or physically qualified",
+   "commit": "a05c6fbbbd05574a1271ceeb2bcabe5dacc39276",
+   "adaptation": "native Python _SET_MPC_MATERIAL and start_after_preheat.py"
+  },
+  "rat-race": {
+   "status": "source-adopted; not deployed or physically qualified",
+   "commit": "4ef5519333b4f8f3e37774b7cadafb5da9f40c2d",
+   "note": "pre-existing missing control == mpc guard recorded in rat-race docs/open-issues.md"
+  },
+  "mini-trip": {
+   "status": "pending",
+   "dependency": "no MPC macro yet; adopt with MPC (master docs/open-issues.md)"
+  }
+ },
+ "pending": [
+  "deploy/restart on each printer",
+  "physical PETG high-flow temperature trace (docs/mpc-heat-capacity.md)"
+ ]
+}

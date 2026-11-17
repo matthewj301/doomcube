@@ -55,7 +55,8 @@ class PreflightTests(unittest.TestCase):
                             'BED_TEMP': ['-1', '121', 'nan'],
                             'TARGET_CHAMBER_TEMP': ['-1', '101', 'nan', 'inf'],
                             'TOOL': ['-1', '1.5', 'nan', 'inf'],
-                            'MATERIAL': ['ASA"\nM112', '']}.items():
+                            'MATERIAL': ['ASA"\nM112', ''],
+                            'FILAMENT_DENSITY': ['0', '0.4', '3.1', 'nan', 'inf', 'oops', '1.2\nM112']}.items():
             for value in values:
                 with self.subTest(key=key, value=value):
                     old = dict(self.params)
@@ -63,6 +64,13 @@ class PreflightTests(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         self.check()
                     self.params = old
+
+    def test_filament_density_optional_and_accepted_in_range(self):
+        self.check()
+        for value in ('0.5', '1.04', '1.27', '3.0'):
+            with self.subTest(value=value):
+                self.params['FILAMENT_DENSITY'] = value
+                self.check()
 
     def test_missing_purge_and_sensor_fail_early(self):
         del self.p['gcode']['commands']['LINE_PURGE']
