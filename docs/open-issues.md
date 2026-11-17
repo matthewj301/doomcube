@@ -21,8 +21,13 @@ delete the entry in the same change. Record each entry with date, origin and evi
 - **Physical validation of the 2026-11-16 heat-capacity table is pending.** Print PETG
   with large flow changes and compare the extruder temperature trace before/after (old
   PETG value 1.17 vs 1.75). See docs/mpc-heat-capacity.md. Not a code task; needs the user.
-- **Tri-Zero (mini-trip) has no FILAMENT_DENSITY support.** If it gains MPC, adopt the
-  master `_SET_MPC_MATERIAL` + preflight + slicer `FILAMENT_DENSITY=` together.
+- **Tri-Zero (mini-trip) runs MPC with no per-material values.** Its Kalico branch
+  (`codex/trizero-kalico`, not yet the printer's live `main`) includes
+  `custom/hotends/tk.cfg` with `control: mpc` and fixed `filament_density: 1.07` /
+  `filament_heat_capacity: 1.30` (ASA's old room-temperature value), but has no
+  `_SET_MPC_MATERIAL` call, so every material uses those. When it adopts the shared
+  lifecycle, adopt the master `_SET_MPC_MATERIAL` + preflight + slicer
+  `FILAMENT_DENSITY=` together.
 
 ## Test harness
 
